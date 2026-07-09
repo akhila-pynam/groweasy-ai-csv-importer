@@ -461,7 +461,7 @@ https://github.com/akhila-pynam
 
 LinkedIn
 
-(Add LinkedIn Profile)
+https://www.linkedin.com/in/akhila-pynam-ba0369338/
 
 ---
 
