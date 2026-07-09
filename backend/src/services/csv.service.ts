@@ -1,13 +1,21 @@
 import fs from "fs";
 import Papa from "papaparse";
 
-export const parseCSV = (filePath: string) => {
+export interface ParsedCSV {
+  columns: string[];
+  rows: Record<string, string>[];
+}
+
+export const parseCSV = (filePath: string): ParsedCSV => {
   const csv = fs.readFileSync(filePath, "utf-8");
 
-  const result = Papa.parse(csv, {
+  const result = Papa.parse<Record<string, string>>(csv, {
     header: true,
     skipEmptyLines: true,
   });
 
-  return result.data;
+  return {
+    columns: result.meta.fields || [],
+    rows: result.data,
+  };
 };

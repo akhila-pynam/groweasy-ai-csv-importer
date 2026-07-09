@@ -2,34 +2,36 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = "uploads";
+// Create uploads folder if it doesn't exist
+const uploadDir = path.join(__dirname, "../../uploads");
 
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 const storage = multer.diskStorage({
-  destination: (_, __, cb) => {
+  destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
-
-  filename: (_, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-const fileFilter: multer.Options["fileFilter"] = (_, file, cb) => {
-  const extension = path.extname(file.originalname).toLowerCase();
-
-  if (extension !== ".csv") {
-    return cb(new Error("Only CSV files are allowed"));
+const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
+  if (
+    file.mimetype === "text/csv" ||
+    file.originalname.toLowerCase().endsWith(".csv")
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only CSV files are allowed."));
   }
-
-  cb(null, true);
 };
 
-export const upload = multer({
+const upload = multer({
   storage,
   fileFilter,
 });
+
+export default upload;

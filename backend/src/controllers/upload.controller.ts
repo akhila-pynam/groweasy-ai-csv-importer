@@ -1,27 +1,58 @@
 import { Request, Response } from "express";
-import { parseCSV } from "../services/csv.service";
 
-export const uploadCSV = (req: Request, res: Response) => {
+import { parseCSV } from "../services/csv.service";
+import { mapColumns } from "../services/ai.service";
+import { transformRows } from "../services/transform.service";
+import { validateRows } from "../services/validation.service";
+
+export const uploadCSV = async (
+  req: Request,
+  res: Response
+) => {
   try {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "CSV file is required",
+        message: "No CSV uploaded",
       });
     }
 
-    const data = parseCSV(req.file.path);
+    // Step 1: Parse CSV
+    const parsed = parseCSV(req.file.path);
 
-    return res.status(200).json({
+    // Step 2: AI Mapping
+    const mapping = await mapColumns(parsed.columns);
+
+    // Step 3: Transform rows
+    const crmData = transformRows(parsed.rows, mapping);
+
+    // Step 4: Validate rows
+    const { validRows, skippedRows } = validateRows(crmData);
+
+    return res.json({
       success: true,
-      totalRows: data.length,
-      preview: data.slice(0, 10), // Show only first 10 rows
-      columns: Object.keys(data[0] || {}),
+
+      totalRows: parsed.rows.length,
+
+      imported: validRows.length,
+
+      skipped: skippedRows.length,
+
+      columns: parsed.columns,
+
+      preview: parsed.rows.slice(0, 5),
+
+      mapping,
+
+      crmData: validRows,
     });
+
   } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
       success: false,
-      message: "Failed to parse CSV",
+      message: "Internal Server Error",
     });
   }
 };
