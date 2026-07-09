@@ -321,11 +321,16 @@ The application supports CSV exports from
 
 Add screenshots of the following pages.
 
-- Home Page
-- CSV Upload
-- CSV Preview
-- AI Mapping
-- CRM Ready Data
+- Home Page ![Home Page](screenshots/home.png)
+
+- CSV Upload ![CSV Upload](screenshots/upload.png)
+
+- CSV Preview ![CSV Preview](screenshots/preview.png)
+  
+- AI Mapping ![AI Mapping](screenshots/mapping.png)
+
+- CRM Ready Data ![CRM Ready Data](screenshots/crm.png)
+
 
 ---
 
