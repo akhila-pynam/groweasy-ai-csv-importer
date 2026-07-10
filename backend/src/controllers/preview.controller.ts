@@ -13,18 +13,16 @@ export const previewCSV = (
       });
     }
 
-    // Parse CSV directly from memory
     const parsed = parseCSV(req.file.buffer);
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       totalRows: parsed.rows.length,
       columns: parsed.columns,
       preview: parsed.rows.slice(0, 5),
     });
-
   } catch (error) {
-    console.error(error);
+    console.error("Preview Error:", error);
 
     return res.status(500).json({
       success: false,

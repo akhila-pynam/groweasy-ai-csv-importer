@@ -29,7 +29,7 @@ export const uploadCSV = async (
     // Validate rows
     const { validRows, skippedRows } = validateRows(crmData);
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       totalRows: parsed.rows.length,
       imported: validRows.length,
@@ -40,7 +40,7 @@ export const uploadCSV = async (
       crmData: validRows,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Upload Error:", error);
 
     return res.status(500).json({
       success: false,
