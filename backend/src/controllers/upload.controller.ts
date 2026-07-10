@@ -17,36 +17,28 @@ export const uploadCSV = async (
       });
     }
 
-    // Step 1: Parse CSV
-    const parsed = parseCSV(req.file.path);
+    // Parse CSV from memory
+    const parsed = parseCSV(req.file.buffer);
 
-    // Step 2: AI Mapping
+    // AI Mapping
     const mapping = await mapColumns(parsed.columns);
 
-    // Step 3: Transform rows
+    // Transform rows
     const crmData = transformRows(parsed.rows, mapping);
 
-    // Step 4: Validate rows
+    // Validate rows
     const { validRows, skippedRows } = validateRows(crmData);
 
     return res.json({
       success: true,
-
       totalRows: parsed.rows.length,
-
       imported: validRows.length,
-
       skipped: skippedRows.length,
-
       columns: parsed.columns,
-
       preview: parsed.rows.slice(0, 5),
-
       mapping,
-
       crmData: validRows,
     });
-
   } catch (error) {
     console.error(error);
 
