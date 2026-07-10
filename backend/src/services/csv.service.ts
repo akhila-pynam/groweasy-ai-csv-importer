@@ -1,4 +1,3 @@
-import fs from "fs";
 import Papa from "papaparse";
 
 export interface ParsedCSV {
@@ -6,8 +5,8 @@ export interface ParsedCSV {
   rows: Record<string, string>[];
 }
 
-export const parseCSV = (filePath: string): ParsedCSV => {
-  const csv = fs.readFileSync(filePath, "utf-8");
+export const parseCSV = (buffer: Buffer): ParsedCSV => {
+  const csv = buffer.toString("utf-8");
 
   const result = Papa.parse<Record<string, string>>(csv, {
     header: true,
