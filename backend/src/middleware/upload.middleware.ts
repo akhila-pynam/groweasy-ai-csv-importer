@@ -1,20 +1,24 @@
-import Papa from "papaparse";
+import multer from "multer";
 
-export interface ParsedCSV {
-  columns: string[];
-  rows: Record<string, string>[];
-}
+const storage = multer.memoryStorage();
 
-export const parseCSV = (buffer: Buffer): ParsedCSV => {
-  const csv = buffer.toString("utf-8");
-
-  const result = Papa.parse<Record<string, string>>(csv, {
-    header: true,
-    skipEmptyLines: true,
-  });
-
-  return {
-    columns: result.meta.fields || [],
-    rows: result.data,
-  };
+const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
+  if (
+    file.mimetype === "text/csv" ||
+    file.originalname.toLowerCase().endsWith(".csv")
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only CSV files are allowed."));
+  }
 };
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+  },
+});
+
+export default upload;
