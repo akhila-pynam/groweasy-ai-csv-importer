@@ -13,15 +13,13 @@ export const previewCSV = (
       });
     }
 
-    const parsed = parseCSV(req.file.path);
+    // Parse CSV directly from memory
+    const parsed = parseCSV(req.file.buffer);
 
     return res.json({
       success: true,
-
       totalRows: parsed.rows.length,
-
       columns: parsed.columns,
-
       preview: parsed.rows.slice(0, 5),
     });
 
